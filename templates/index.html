@@ -1,0 +1,436 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Question Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-gray-100"> <!-- Updated for dark theme -->
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-indigo-400">EurekaLab</h1> 
+            <p class="text-gray-400 mt-2">Formulate research questions and hypotheses based on literature review findings</p>
+        </header> -->
+        <header class="w-full mb-8">
+            <!-- Logo Section -->
+            <div class="flex justify-between items-center px-4">
+                <!-- Left Logo -->
+                <div class="flex-1 flex justify-start">
+                    <img src="/static/logo1.png" alt="Logo 1" class="h-12 w-auto">
+                </div>
+        
+                <!-- Middle Logo -->
+                <div class="flex-1 flex justify-center">
+                    <img src="/static/logo2.png" alt="Logo 2" class="h-12 w-auto">
+                </div>
+        
+                <!-- Right Logo -->
+                <div class="flex-1 flex justify-end">
+                    <img src="/static/logo3.png" alt="Logo 3" class="h-12 w-auto">
+                </div>
+            </div>
+        
+            <!-- Title and Description -->
+            <div class="text-center mt-4">
+                <h1 class="text-3xl font-bold text-indigo-400">ResearchLabs</h1>
+                <p class="text-gray-400 mt-2">Formulate research questions and hypotheses based on literature review findings</p>
+            </div>
+        </header>
+
+        <div class="bg-gray-800 rounded-lg shadow-md p-6"> <!-- Updated background color -->
+            <form id="researchForm" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label for="research_area" class="block text-sm font-medium text-gray-300">Research Area</label> <!-- Updated text color -->
+                        <input type="text" id="research_area" name="research_area" required 
+                               class="w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-gray-700 text-gray-100" placeholder="e.g., Educational Technology, Climate Change, Public Health"> <!-- Updated background and text color -->
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <label for="research_type" class="block text-sm font-medium text-gray-300">Research Type</label> <!-- Updated text color -->
+                        <select id="research_type" name="research_type" 
+                                class="w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-gray-700 text-gray-100"> <!-- Updated background and text color -->
+                            <option value="qualitative">Qualitative</option>
+                            <option value="quantitative">Quantitative</option>
+                            <option value="mixed-methods">Mixed Methods</option>
+                            <option value="experimental">Experimental</option>
+                            <option value="correlational">Correlational</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label for="literature_findings" class="block text-sm font-medium text-gray-300">Literature Review Findings</label>
+                    
+                    <!-- File Upload and Drag-and-Drop Area -->
+                    <div id="fileUploadArea" class="relative border-2 border-dashed border-gray-600 rounded-lg p-6 text-center hover:border-gray-500 transition-colors">
+                        <input type="file" id="fileInput" accept=".txt,.pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                        <p class="text-gray-400">Drag and drop a file here or <span class="text-indigo-400">click to upload</span>.</p>
+                        <p class="text-sm text-gray-500 mt-2">Supported formats: .txt, .pdf</p>
+                    </div>
+                    
+                    <!-- Display uploaded file name -->
+                    <div id="uploadedFileName" class="mt-2 text-sm text-gray-400 hidden"></div>
+                    
+                    <!-- Textarea for manual input (kept as is) -->
+                    <textarea id="literature_findings" name="literature_findings" rows="6"
+                              class="w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-gray-700 text-gray-100 mt-4"
+                              placeholder="Or paste your literature review findings here..."></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="space-y-2">
+                        <label for="num_questions" class="block text-sm font-medium text-gray-300">Number of Questions</label> <!-- Updated text color -->
+                        <input type="number" id="num_questions" name="num_questions" min="1" max="10" value="3"
+                               class="w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-gray-700 text-gray-100"> <!-- Updated background and text color -->
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <label for="include_hypotheses" class="block text-sm font-medium text-gray-300">Include Hypotheses</label> <!-- Updated text color -->
+                        <div class="flex items-center h-10">
+                            <input type="checkbox" id="include_hypotheses" name="include_hypotheses" checked
+                                   class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-600 rounded bg-gray-700"> <!-- Updated background color -->
+                            <label for="include_hypotheses" class="ml-2 block text-sm text-gray-300">Generate testable hypotheses</label> <!-- Updated text color -->
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <label for="model" class="block text-sm font-medium text-gray-300">LLM Model</label> <!-- Updated text color -->
+                        <select id="model" name="model" 
+                                class="w-full px-3 py-2 border border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 bg-gray-700 text-gray-100"> <!-- Updated background and text color -->
+                            <option value="gemma2:2b">Loading models...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex justify-center">
+                    <button type="submit" id="generateBtn" 
+                            class="px-6 py-3 bg-indigo-600 text-white font-medium rounded-md shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Generate Research Questions
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div id="loadingIndicator" class="hidden mt-8 text-center">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-600"></div>
+            <p class="mt-2 text-gray-400">Generating research questions...</p> <!-- Updated text color -->
+        </div>
+
+        <div id="resultsContainer" class="hidden mt-8 bg-gray-800 rounded-lg shadow-md p-6"> <!-- Updated background color -->
+            <h2 class="text-xl font-semibold text-indigo-400 mb-4">Generated Research Questions & Hypotheses</h2> <!-- Updated text color -->
+            <div id="resultsContent" class="prose max-w-none text-gray-300"></div> <!-- Updated text color -->
+            <div class="mt-6 flex justify-end">
+                <button id="copyBtn" class="px-4 py-2 bg-gray-700 text-gray-300 font-medium rounded-md shadow hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"> <!-- Updated background and text color -->
+                    Copy to Clipboard
+                </button>
+            </div>
+            <!-- Add this button below the "Copy to Clipboard" button -->
+            <div class="mt-6 flex justify-end space-x-4"> <!-- Added space-x-4 for spacing between buttons -->
+                <button id="readAloudBtn" class="px-4 py-2 bg-indigo-600 text-white font-medium rounded-md shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Read Aloud
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+<footer class="w-full py-6 bg-gray-800 mt-8">
+    <div class="container mx-auto text-center">
+        <p class="text-gray-400 text-sm">
+            Provided by <span class="text-indigo-400 font-semibold">IVIS LABS Pvt Ltd</span>
+        </p>
+    </div>
+</footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Fetch available models
+            try {
+                const response = await fetch('/models');
+                const data = await response.json();
+                const modelSelect = document.getElementById('model');
+                
+                // Clear loading option
+                modelSelect.innerHTML = '';
+                
+                // Add models to select
+                data.models.forEach(model => {
+                    const option = document.createElement('option');
+                    option.value = model;
+                    option.textContent = model;
+                    modelSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error fetching models:', error);
+            }
+            
+            // Form submission
+            const form = document.getElementById('researchForm');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const resultsContent = document.getElementById('resultsContent');
+            const copyBtn = document.getElementById('copyBtn');
+            
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Show loading indicator
+                loadingIndicator.classList.remove('hidden');
+                resultsContainer.classList.add('hidden');
+                
+                // Get form data
+                const formData = new FormData(form);
+                
+                // Handle checkbox properly
+                formData.set('include_hypotheses', document.getElementById('include_hypotheses').checked);
+                
+                try {
+                    const response = await fetch('/generate', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to generate research questions');
+                    }
+                    
+                    const data = await response.json();
+                    
+                    // Format the response with Markdown-like formatting
+                    const formattedText = data.generated_questions
+                        .replace(/\n/g, '<br>')
+                        .replace(/#{1,6}\s+([^\n]+)/g, '<h3 class="font-bold text-lg mt-4 mb-2">$1</h3>')
+                        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+                        .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+                        .replace(/(\d+)\.\s+([^\n]+)/g, '<p class="ml-4"><span class="font-bold">$1.</span> $2</p>');
+                    
+                    // Display results
+                    resultsContent.innerHTML = formattedText;
+                    resultsContainer.classList.remove('hidden');
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error generating research questions. Please try again.');
+                } finally {
+                    loadingIndicator.classList.add('hidden');
+                }
+            });
+            
+            // Copy to clipboard functionality
+            copyBtn.addEventListener('click', function() {
+                const textToCopy = resultsContent.innerText;
+                navigator.clipboard.writeText(textToCopy).then(function() {
+                    const originalText = copyBtn.textContent;
+                    copyBtn.textContent = 'Copied!';
+                    setTimeout(() => {
+                        copyBtn.textContent = originalText;
+                    }, 2000);
+                }).catch(function(err) {
+                    console.error('Could not copy text: ', err);
+                });
+            });
+        });
+                // Add this script at the end of your existing JavaScript code
+
+// // Read Aloud Functionality
+// const readAloudBtn = document.getElementById('readAloudBtn');
+// const resultsContent = document.getElementById('resultsContent');
+
+// readAloudBtn.addEventListener('click', function () {
+//     const textToRead = resultsContent.innerText; // Get the text content to read
+
+//     if ('speechSynthesis' in window) {
+//         // Check if the browser supports the Web Speech API
+//         const utterance = new SpeechSynthesisUtterance(textToRead);
+
+//         // Optional: Configure voice and speech rate
+//         utterance.rate = 1; // Speed of speech (0.1 to 10)
+//         utterance.pitch = 1; // Pitch of speech (0 to 2)
+//         utterance.volume = 1; // Volume of speech (0 to 1)
+
+//         // Find a suitable voice (optional)
+//         const voices = window.speechSynthesis.getVoices();
+//         const preferredVoice = voices.find(voice => voice.name.includes('Google')); // Example: Prefer Google's voice
+//         if (preferredVoice) {
+//             utterance.voice = preferredVoice;
+//         }
+
+//         // Start speaking
+//         window.speechSynthesis.speak(utterance);
+
+//         // Update button text while speaking
+//         readAloudBtn.textContent = 'Stop Reading';
+//         readAloudBtn.classList.remove('bg-indigo-600');
+//         readAloudBtn.classList.add('bg-red-600');
+
+//         // Handle when speech ends
+//         utterance.onend = function () {
+//             readAloudBtn.textContent = 'Read Aloud';
+//             readAloudBtn.classList.remove('bg-red-600');
+//             readAloudBtn.classList.add('bg-indigo-600');
+//         };
+
+//         // Stop speech if the button is clicked again
+//         readAloudBtn.onclick = function () {
+//             if (window.speechSynthesis.speaking) {
+//                 window.speechSynthesis.cancel();
+//                 readAloudBtn.textContent = 'Read Aloud';
+//                 readAloudBtn.classList.remove('bg-red-600');
+//                 readAloudBtn.classList.add('bg-indigo-600');
+//             }
+//         };
+//     } else {
+//         alert('Your browser does not support the Read Aloud feature. Please use Chrome, Edge, or Safari.');
+//     }
+// });
+
+            // Add this script at the end of your existing JavaScript code
+
+// Read Aloud Functionality
+const readAloudBtn = document.getElementById('readAloudBtn');
+const resultsContent = document.getElementById('resultsContent');
+
+readAloudBtn.addEventListener('click', function () {
+    const textToRead = resultsContent.innerText; // Get the text content to read
+
+    if ('speechSynthesis' in window) {
+        // Check if the browser supports the Web Speech API
+        const utterance = new SpeechSynthesisUtterance(textToRead);
+
+        // Optional: Configure voice and speech rate
+        utterance.rate = 1; // Speed of speech (0.1 to 10)
+        utterance.pitch = 1; // Pitch of speech (0 to 2)
+        utterance.volume = 1; // Volume of speech (0 to 1)
+
+        // Find a female voice
+        const voices = window.speechSynthesis.getVoices();
+        const femaleVoice = voices.find(voice => voice.name.includes('Female') || voice.name.includes('woman') || voice.name.includes('female'));
+
+        if (femaleVoice) {
+            utterance.voice = femaleVoice; // Set the female voice
+        } else {
+            console.warn('No female voice found. Using default voice.');
+        }
+
+        // Start speaking
+        window.speechSynthesis.speak(utterance);
+
+        // Update button text while speaking
+        readAloudBtn.textContent = 'Stop Reading';
+        readAloudBtn.classList.remove('bg-indigo-600');
+        readAloudBtn.classList.add('bg-red-600');
+
+        // Handle when speech ends
+        utterance.onend = function () {
+            readAloudBtn.textContent = 'Read Aloud';
+            readAloudBtn.classList.remove('bg-red-600');
+            readAloudBtn.classList.add('bg-indigo-600');
+        };
+
+        // Stop speech if the button is clicked again
+        readAloudBtn.onclick = function () {
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+                readAloudBtn.textContent = 'Read Aloud';
+                readAloudBtn.classList.remove('bg-red-600');
+                readAloudBtn.classList.add('bg-indigo-600');
+            }
+        };
+    } else {
+        alert('Your browser does not support the Read Aloud feature. Please use Chrome, Edge, or Safari.');
+    }
+});
+
+// Ensure voices are loaded before using them
+window.speechSynthesis.onvoiceschanged = function () {
+    console.log('Voices loaded');
+};
+
+
+
+// File Upload and Drag-and-Drop Functionality
+const fileUploadArea = document.getElementById('fileUploadArea');
+const fileInput = document.getElementById('fileInput');
+const uploadedFileName = document.getElementById('uploadedFileName');
+const literatureFindingsTextarea = document.getElementById('literature_findings');
+
+// Handle file selection
+fileInput.addEventListener('change', function (event) {
+    const file = event.target.files[0];
+    if (file) {
+        handleFileUpload(file);
+    }
+});
+
+// Handle drag-and-drop events
+fileUploadArea.addEventListener('dragover', function (event) {
+    event.preventDefault();
+    fileUploadArea.classList.add('border-indigo-500', 'dragover');
+});
+
+fileUploadArea.addEventListener('dragleave', function () {
+    fileUploadArea.classList.remove('border-indigo-500', 'dragover');
+});
+
+fileUploadArea.addEventListener('drop', function (event) {
+    event.preventDefault();
+    fileUploadArea.classList.remove('border-indigo-500', 'dragover');
+    const file = event.dataTransfer.files[0];
+    if (file) {
+        handleFileUpload(file);
+    }
+});
+
+// Function to handle file upload
+function handleFileUpload(file) {
+    // Validate file type
+    const allowedTypes = ['text/plain', 'application/pdf'];
+    if (!allowedTypes.includes(file.type)) {
+        alert('Unsupported file type. Please upload a .txt or .pdf file.');
+        return;
+    }
+
+    // Display file name
+    uploadedFileName.textContent = `Uploaded file: ${file.name}`;
+    uploadedFileName.classList.remove('hidden');
+
+    // Read file content
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        const fileContent = e.target.result;
+
+        // If it's a PDF, extract text using a library (e.g., pdf-parse)
+        if (file.type === 'application/pdf') {
+            extractTextFromPDF(fileContent).then(text => {
+                // Append or replace text in the textarea
+                literatureFindingsTextarea.value += `\n\n${text}`; // Append text
+                // literatureFindingsTextarea.value = text; // Replace text
+            }).catch(error => {
+                console.error('Error extracting text from PDF:', error);
+                alert('Failed to extract text from PDF. Please try again.');
+            });
+        } else {
+            // For text files, append or replace text in the textarea
+            literatureFindingsTextarea.value += `\n\n${fileContent}`; // Append text
+            // literatureFindingsTextarea.value = fileContent; // Replace text
+        }
+    };
+    reader.readAsBinaryString(file); // Use readAsBinaryString for PDFs
+}
+
+// Function to extract text from PDF (requires pdf-parse library)
+async function extractTextFromPDF(data) {
+    // Dynamically import pdf-parse library
+    const pdfjsLib = await import('https://cdn.jsdelivr.net/npm/pdf-parse/lib/pdf-parse.min.js');
+    const pdfData = new Uint8Array(data);
+    const pdf = await pdfjsLib.default(pdfData);
+    return pdf.text;
+}
+        
+    </script>
+</body>
+</html>
